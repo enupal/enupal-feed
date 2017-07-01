@@ -3,6 +3,23 @@ const main = remote.require('./main.js')
 
 $(function(){
 
+	let query = 'SELECT * FROM craft_users where username = "admin"'
+
+	main.connection.query(query, function(err, rows, fields){
+		if(err)
+		{
+			console.log("Hubo un error al hacer la consulta")
+			console.log(err)
+			return
+		}
+
+		let row = rows[0]
+		$('.stats').append('Usuario: <span>'+ row.firstName +'</span>')
+		$('.stats').append('Ultima conexion: <span>'+ row.lastLoginDate +'</span>')
+	})
+
+	main.closeConnection()
+
 	const os = require('os')
 	const prettyBytes = require('pretty-bytes')
 
