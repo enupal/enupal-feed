@@ -1,11 +1,46 @@
 {
   "name": "enupal-electron",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "The enupal feed blog",
+  "main": "./main.js",
   "scripts": {
-    "start" : "electron main.js"
+    "postinstall": "install-app-deps",
+    "start": "electron .",
+    "pack": "build --dir",
+    "dist": "build"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Enupal <info@enupal.com>",
+  "license": "MIT",
+  "build": {
+    "appId": "enupal-electronv1",
+    "asar": true,
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico"
+    }
+  },
+  "dependencies": {
+    "mysql": "^2.13.0",
+    "pretty-bytes": "^4.0.2"
+  }
 }

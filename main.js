@@ -10,10 +10,10 @@ const mysql = require('mysql')
 
 const connection = mysql.createConnection({
 	host     : '127.0.0.1',
-	port     : 'xxx',
-	user     : 'xxxx',
-	password : 'xxxxxx',
-	database : 'xxxxxxxx'
+	port     : '8889',
+	user     : 'root',
+	password : 'root',
+	database : 'happylager_local_03'
 })
 
 connection.connect(function(err){
@@ -42,7 +42,7 @@ function createWindow(){
 		slashes: true
 	}))
 
-	win.webContents.openDevTools()
+	//win.webContents.openDevTools()
 }
 
 exports.openWindow = () => {
