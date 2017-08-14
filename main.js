@@ -4,6 +4,9 @@ const {app, BrowserWindow} = electron
 const path = require('path')
 const url  = require('url')
 
+const isDev = require('electron-is-dev');  // this is required to check if the app is running in development mode.
+const {appUpdater} = require('./autoupdater')
+
 let win
 
 const mysql = require('mysql')
@@ -33,6 +36,11 @@ exports.closeConnection = () =>{
 	})
 }
 
+// UPDATE CODE
+// Funtion to check the current OS. As of now there is no proper method to add auto-updates to linux platform.
+function isWindowsOrmacOS() {
+	return process.platform === 'darwin' || process.platform === 'win32';
+}
 
 function createWindow(){
 	win = new BrowserWindow ({width: 800, height:600, icon: __dirname + '/favicon.ico'})
@@ -42,7 +50,16 @@ function createWindow(){
 		slashes: true
 	}))
 
-	//win.webContents.openDevTools()
+	const page = win.webContents;
+
+	page.once('did-frame-finish-load', () => {
+		const checkOS = isWindowsOrmacOS();
+		if (checkOS && !isDev) {
+			// Initate auto-updates on macOs and windows
+			appUpdater();
+	}});
+
+	win.webContents.openDevTools()
 }
 
 exports.openWindow = () => {
@@ -55,3 +72,4 @@ exports.openWindow = () => {
 }
 
 app.on('ready', createWindow)
+

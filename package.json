@@ -40,6 +40,7 @@
     }
   },
   "dependencies": {
+    "electron-is-dev": "^0.3.0",
     "mysql": "^2.13.0",
     "pretty-bytes": "^4.0.2"
   }
