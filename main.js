@@ -59,7 +59,7 @@ function createWindow(){
 			appUpdater();
 	}});
 
-	win.webContents.openDevTools()
+	//win.webContents.openDevTools()
 }
 
 exports.openWindow = () => {
