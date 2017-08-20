@@ -4,6 +4,9 @@ const {app, BrowserWindow} = electron
 const path = require('path')
 const url  = require('url')
 
+//updater 85243753a7031694ec6856ac439cdfccf19b1fc7
+const autoUpdater = require("electron-updater").autoUpdater
+
 const isDev = require('electron-is-dev');  // this is required to check if the app is running in development mode.
 const {appUpdater} = require('./autoupdater')
 
@@ -59,7 +62,7 @@ function createWindow(){
 			appUpdater();
 	}});
 
-	//win.webContents.openDevTools()
+	win.webContents.openDevTools()
 }
 
 exports.openWindow = () => {
