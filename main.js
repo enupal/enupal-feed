@@ -108,12 +108,24 @@ function createWindow(){
 
 	const page = win.webContents;
 
-	page.once('did-frame-finish-load', () => {
+	/*page.once('did-frame-finish-load', () => {
 		const checkOS = isWindowsOrmacOS();
 		if (checkOS && !isDev) {
 			// Initate auto-updates on macOs and windows
 			appUpdater();
 	}});
+	*/
+	const checkOS = isWindowsOrmacOS();
+		if (checkOS && !isDev) {
+			let newWin = new BrowserWindow ({width: 400, height:200})
+			newWin.loadURL(url.format({
+				pathname: path.join(__dirname, 'enupal.html'),
+				protocol: 'file',
+				slashes: true
+			}))
+			// Initate auto-updates on macOs and windows
+			appUpdater();
+	}
 
 	win.webContents.openDevTools()
 }
