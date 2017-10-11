@@ -9,7 +9,7 @@
     "start": "electron .",
     "pack": "build --dir",
     "dist": "build",
-    "gh-publish": "electron-builder --x64 --win -p always"
+    "publish": "build -p always"
   },
   "author": "Enupal <info@enupal.com>",
   "license": "MIT",
