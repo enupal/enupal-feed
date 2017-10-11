@@ -1,13 +1,15 @@
 {
   "name": "enupal-electron",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The enupal feed blog",
   "main": "./main.js",
+  "repository": "git@github.com:enupal/enupal-feed.git",
   "scripts": {
     "postinstall": "install-app-deps",
     "start": "electron .",
     "pack": "build --dir",
-    "dist": "build"
+    "dist": "build",
+    "gh-publish": "electron-builder --x64 --win -p always"
   },
   "author": "Enupal <info@enupal.com>",
   "license": "MIT",

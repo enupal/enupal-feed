@@ -5,7 +5,7 @@ $(function(){
 
 	let query = 'SELECT * FROM craft_users where username = "admin"'
 
-	main.connection.query(query, function(err, rows, fields){
+	/*main.connection.query(query, function(err, rows, fields){
 		if(err)
 		{
 			console.log("Hubo un error al hacer la consulta")
@@ -19,6 +19,7 @@ $(function(){
 	})
 
 	main.closeConnection()
+	*/
 
 	const os = require('os')
 	const prettyBytes = require('pretty-bytes')
