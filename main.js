@@ -3,62 +3,16 @@ const {app, BrowserWindow} = electron
 
 const path = require('path')
 const url  = require('url')
+const log = require('electron-log');
 
 //updater 85243753a7031694ec6856ac439cdfccf19b1fc7
 const { dialog } = require('electron')
 const { autoUpdater } = require('electron-updater')
 
-let updater
-autoUpdater.autoDownload = true
-
-autoUpdater.on('error', (event, error) => {
-  dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString())
-})
-
-autoUpdater.on('update-available', () => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Found Updates',
-    message: 'Found updates, do you want update now?',
-    buttons: ['Sure', 'No']
-  }, (buttonIndex) => {
-    if (buttonIndex === 0) {
-      autoUpdater.downloadUpdate()
-    }
-    else {
-      updater.enabled = true
-      updater = null
-    }
-  })
-})
-
-autoUpdater.on('update-not-available', () => {
-  dialog.showMessageBox({
-    title: 'No Updates',
-    message: 'Current version is up-to-date.'
-  })
-  updater.enabled = true
-  updater = null
-})
-
-autoUpdater.on('update-downloaded', () => {
-  dialog.showMessageBox({
-    title: 'Install Updates',
-    message: 'Updates downloaded, application will be quit for update...'
-  }, () => {
-    setImmediate(() => autoUpdater.quitAndInstall())
-  })
-})
-
-// export this to MenuItem click callback
-function checkForUpdates (menuItem, focusedWindow, event) {
-  updater = menuItem
-  updater.enabled = false
-  autoUpdater.checkForUpdates()
-}
-module.exports.checkForUpdates = checkForUpdates
-////////////////////////
-// end autoupdater
+//Logging
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 const isDev = require('electron-is-dev');  // this is required to check if the app is running in development mode.
 const {appUpdater} = require('./autoupdater')
@@ -92,6 +46,44 @@ exports.closeConnection = () =>{
 	})
 }
 
+
+//NEW CODE
+
+function sendStatusToWindow(text) {
+  log.info(text);
+  win.webContents.send('message', text);
+}
+
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Buscando actualizaciones...');
+})
+autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Actualización disponible');
+})
+autoUpdater.on('update-not-available', (info) => {
+  sendStatusToWindow('Ya tienes la última versión.');
+})
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error al actualizar.');
+})
+autoUpdater.on('download-progress', (progressObj) => {
+  let speed = ((progressObj.bytesPerSecond / 1000) / 1000).toFixed(1);
+  let transferred = ((progressObj.transferred / 1000) / 1000).toFixed(1);
+  let total = ((progressObj.total / 1000) / 1000).toFixed(1);
+  let percent = progressObj.percent.toFixed(1);
+
+  let log_message = "Download speed: " + speed + " Mb/s";
+  log_message = log_message + ' - Downloaded: ' + percent + '%';
+  log_message = log_message + ' (' + transferred + "/" + total + ')';
+  sendStatusToWindow(log_message);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Actualización descargada, se instalará en 5 segundos.');
+});
+
+// end new code
+
+
 // UPDATE CODE
 // Funtion to check the current OS. As of now there is no proper method to add auto-updates to linux platform.
 function isWindowsOrmacOS() {
@@ -106,28 +98,7 @@ function createWindow(){
 		slashes: true
 	}))
 
-	const page = win.webContents;
-
-	/*page.once('did-frame-finish-load', () => {
-		const checkOS = isWindowsOrmacOS();
-		if (checkOS && !isDev) {
-			// Initate auto-updates on macOs and windows
-			appUpdater();
-	}});
-	*/
-	const checkOS = isWindowsOrmacOS();
-		if (checkOS && !isDev) {
-			let newWin = new BrowserWindow ({width: 400, height:200})
-			newWin.loadURL(url.format({
-				pathname: path.join(__dirname, 'enupal.html'),
-				protocol: 'file',
-				slashes: true
-			}))
-			// Initate auto-updates on macOs and windows
-			appUpdater();
-	}
-
-	win.webContents.openDevTools()
+	//win.webContents.openDevTools()
 }
 
 exports.openWindow = () => {
@@ -140,4 +111,9 @@ exports.openWindow = () => {
 }
 
 app.on('ready', createWindow)
+
+
+app.on('ready', function()  {
+  //autoUpdater.checkForUpdates();
+});
 
